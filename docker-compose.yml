@@ -1,0 +1,34 @@
+
+
+version: '3'
+services:
+    php:
+      build:
+        context: ./php-fpm/
+
+      volumes: 
+        - ./app:/app
+        - ./php-fpm/php.ini:/usr/local/etc/php/php.ini
+      depends_on:
+        - mysql  
+
+    web:
+     image: nginx:latest
+     ports:
+        - "8080:80"
+     volumes:
+        - ./app:/app
+        - ./site.conf:/etc/nginx/conf.d/site.conf
+     depends_on:
+            - php
+     links:
+        - php    
+
+    mysql:
+      image: mysql:8
+      environment:
+          MYSQL_ROOT_PASSWORD: symf0ny
+      ports:
+          - "3333:3306"
+   #http://geekyplatypus.com/dockerise-your-php-application-with-nginx-and-php7-fpm/
+   #https://dev.to/_mertsimsek/using-xdebug-with-docker-2k8o
